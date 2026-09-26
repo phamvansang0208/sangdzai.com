@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài Xỉu - Game</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game {
+            width: 420px;
+            max-width: 95%;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,.5);
+        }
+
+        h1 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .balance {
+            font-size: 20px;
+            margin: 15px 0;
+        }
+
+        .dice {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .die {
+            width: 70px;
+            height: 70px;
+            background: white;
+            color: #111;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 38px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,.4);
+        }
+
+        .result {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #ffd700;
+        }
+
+        .choices {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        button {
+            border: none;
+            padding: 13px 25px;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .tai {
+            background: #e53935;
+            color: white;
+        }
+
+        .xiu {
+            background: #1e88e5;
+            color: white;
+        }
+
+        .roll {
+            background: #ffd700;
+            color: #111;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .history {
+            margin-top: 25px;
+            text-align: left;
+            background: rgba(255,255,255,.08);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .history h3 {
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        #historyList {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,.1);
+        }
+
+        .win {
+            color: #00e676;
+        }
+
+        .lose {
+            color: #ff5252;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <h1>🎲 TÀI XỈU 🎲</h1>
+
+    <div class="balance">
+        Điểm: <span id="balance">1000</span>
+    </div>
+
+    <div>
+        Chọn cửa:
+    </div>
+
+    <div class="choices">
+        <button class="tai" onclick="choose('Tài')">
+            TÀI
+        </button>
+
+        <button class="xiu" onclick="choose('Xỉu')">
+            XỈU
+        </button>
+    </div>
+
+    <div>
+        Lựa chọn:
+        <strong id="choice">Chưa chọn</strong>
+    </div>
+
+    <div class="dice">
+        <div class="die" id="dice1">⚀</div>
+        <div class="die" id="dice2">⚀</div>
+        <div class="die" id="dice3">⚀</div>
+    </div>
+
+    <div class="result" id="result">
+        Hãy chọn Tài hoặc Xỉu
+    </div>
+
+    <button class="roll" onclick="rollDice()">
+        🎲 LẮC XÚC XẮC
+    </button>
+
+    <div class="history">
+        <h3>📜 Lịch sử</h3>
+        <div id="historyList">
+            Chưa có lượt chơi.
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+    let balance = 1000;
+    let choice = "";
+
+    const diceFaces = [
+        "⚀",
+        "⚁",
+        "⚂",
+        "⚃",
+        "⚄",
+        "⚅"
+    ];
+
+    function choose(type) {
+        choice = type;
+
+        document.getElementById("choice").textContent = type;
+
+        document.getElementById("result").textContent =
+            "Đã chọn " + type;
+    }
+
+
+    function rollDice() {
+
+        if (choice === "") {
+            alert("Hãy chọn Tài hoặc Xỉu trước!");
+            return;
+        }
+
+        if (balance <= 0) {
+            alert("Bạn đã hết điểm!");
+            return;
+        }
+
+        let d1 = Math.floor(Math.random() * 6) + 1;
+        let d2 = Math.floor(Math.random() * 6) + 1;
+        let d3 = Math.floor(Math.random() * 6) + 1;
+
+        document.getElementById("dice1").textContent =
+            diceFaces[d1 - 1];
+
+        document.getElementById("dice2").textContent =
+            diceFaces[d2 - 1];
+
+        document.getElementById("dice3").textContent =
+            diceFaces[d3 - 1];
+
+        let total = d1 + d2 + d3;
+
+        let resultType;
+
+        if (total >= 11) {
+            resultType = "Tài";
+        } else {
+            resultType = "Xỉu";
+        }
+
+        let resultText =
+            resultType + " - Tổng: " + total;
+
+        let win = choice === resultType;
+
+        if (win) {
+            balance += 100;
+
+            document.getElementById("result").innerHTML =
+                "🎉 THẮNG! " + resultText;
+
+        } else {
+            balance -= 100;
+
+            document.getElementById("result").innerHTML =
+                "😢 THUA! " + resultText;
+        }
+
+        document.getElementById("balance").textContent =
+            balance;
+
+        addHistory(
+            d1,
+            d2,
+            d3,
+            total,
+            resultType,
+            win
+        );
+    }
+
+
+    function addHistory(
+        d1,
+        d2,
+        d3,
+        total,
+        resultType,
+        win
+    ) {
+
+        const history =
+            document.getElementById("historyList");
+
+        if (
+            history.textContent.includes(
+                "Chưa có lượt chơi"
+            )
+        ) {
+            history.innerHTML = "";
+        }
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "history-item " +
+            (win ? "win" : "lose");
+
+        item.textContent =
+            `${d1} - ${d2} - ${d3} | Tổng ${total} | ${resultType} | ${
+                win ? "THẮNG" : "THUA"
+            }`;
+
+        history.prepend(item);
+    }
+
+</script>
+
+</body>
+</html>
+```
